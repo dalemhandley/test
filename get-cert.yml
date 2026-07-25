@@ -1,17 +1,20 @@
-- name: Get a cert from an https port
-  community.crypto.get_certificate:
-    host: "www.google.com"
-    port: 443
-  delegate_to: localhost
-  run_once: true
-  register: cert
+- name: Test
+  hosts: all
+  tasks:
+    - name: Get a cert from an https port
+      community.crypto.get_certificate:
+        host: "www.google.com"
+        port: 443
+      delegate_to: localhost
+      run_once: true
+      register: cert
 
-- name: How many days until cert expires
-  ansible.builtin.debug:
-    msg: "cert expires in: {{ expire_days }} days."
-  vars:
-    expire_days: >-
-      {{ (
-        (cert.not_after | ansible.builtin.to_datetime('%Y%m%d%H%M%SZ')) -
-        (ansible_date_time.iso8601 | ansible.builtin.to_datetime('%Y-%m-%dT%H:%M:%SZ'))
-      ).days }}
+    - name: How many days until cert expires
+      ansible.builtin.debug:
+        msg: "cert expires in: {{ expire_days }} days."
+      vars:
+        expire_days: >-
+          {{ (
+            (cert.not_after | ansible.builtin.to_datetime('%Y%m%d%H%M%SZ')) -
+            (ansible_date_time.iso8601 | ansible.builtin.to_datetime('%Y-%m-%dT%H:%M:%SZ'))
+          ).days }}
